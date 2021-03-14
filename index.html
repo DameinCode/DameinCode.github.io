@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset = "UTF-8">
+        <title>LFSR is easy</title>
+        <link href="LFSR.css" type="text/css" rel="stylesheet"/>
+        <style>
+            p {
+                font-family: sans-serif;
+                font-size: 20px;
+                margin-left: 4%;
+                padding: .4rem;
+                font-weight: 600;
+                font-style: italic;
+            }
+
+            .solveIt {
+                cursor: pointer;
+                padding: .1rem;
+                border: 1px solid black;
+                
+            }
+
+            #org_div1 {
+                margin-left: 2%;
+                margin-top: 10px;
+                line-height: 4px;
+            }
+
+            #ans {
+                font-family: sans-serif;
+                /* font-size: 20px;
+                margin-left: 4%;
+                padding: .4rem; */
+                font-weight: 600;
+                font-style: italic;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div>
+            <p>Welcome ! Lets solve LFSR</p>
+        </div>
+        <div class = "Inp">
+            <input type="text" id="inp1" placeholder="Given">
+            <input type="text" id="inp2" placeholder="Register">
+            <button onclick="solveIt()" class="solveIt">Solve</button>
+        </div>
+        <div id="ans">Answer: </div>
+        <div id='org_div1'></div>
+
+        <script>
+            function solveIt() {
+                var n = document.getElementById('inp1').value;
+                var reg = document.getElementById('inp2').value;
+                var vec = [];
+                var ne = [];
+                var toCheck1 = n.split(' ').join('');
+                var toCheck2 = reg.split(' ').join('');
+                if(n === '' || toCheck1 === '' || toCheck2 === '' || reg === '') {
+                    alert("Write given")
+                    return 
+                } 
+                if(isNaN(Number(n)) || isNaN(Number(reg))) {
+                    alert("Not text !")
+                    return
+                }
+                else {
+                    for(let i of n) {
+                    if(i === '1'){
+                        vec.push(1);
+                    } else {
+                        vec.push(0);
+                    }
+                    };
+                    var a = new Array(Number(reg)+1); 
+                    for (var i = 0; i < Number(reg)+1; i++) { 
+                    a[i] = new Array(Number(reg) + 1);
+                    } 
+
+                    for(var i = 0; i < Number(reg)+1; i++) {
+                    var j, c;
+                    for(j = i, c = 0; j < i+Number(reg)+1, c < Number(reg)+1; j++, c++) {
+                        if(c !== Number(reg)) {
+                        a[i][c] = vec[j];
+                        } else { 
+                            ne.push(vec[j]);
+                        }
+                    }
+                    }
+                    var ok = false;
+                    for(i = 0; i < Number(reg)+1; i++) {
+                    ok = false;
+                    if(a[i][i] !== 1) {
+                        var c;
+                        for(c = i; c < Number(reg); c++) {
+                        if(a[c][i] === 1) {
+                            var k;
+                            ok = true; 
+                            for(k = 0; k < Number(reg); k++) {
+                            a[i][k] = a[i][k]^a[c][k];
+                            } 
+                            ne[i] = ne[c]^ne[i];
+                            break;
+                        } 
+                        } 
+                        if(!ok) {
+                        var c;
+                        for(c = 0; c < i; c++) {
+                            if(a[c][i] === 1) {
+                            var k;
+                            for(k = 0; k < Number(reg); k++) {
+                                a[i][k] = a[i][k]^a[c][k];
+                            } 
+                            ne[i] = ne[c]^ne[i];
+                            break;
+                            }
+                        }
+                        }
+                    } 
+                    if (a[i][i] === 1) {
+                        var u;
+                        for(u = 0; u < Number(reg)+1; u++) {
+                        if(u === i) {
+                            continue;
+                        } 
+                        else if(a[u][i] === 1) {
+                            var k;
+                            for(k = 0; k < Number(reg); k++) {
+                            a[u][k] = (a[u][k]^a[i][k]);
+                            } 
+                            ne[u] = (ne[u]^ne[i]);
+                        }
+                        }
+                    }
+                }
+                var answer = '';
+                var ans = 0
+                for(var i = Number(reg)-1; i >= 0; i--) {
+                    answer += 'X' + (ans+1) + ' = ' + ne[i] + '; ';
+                    ans++;
+                }
+
+                var newDiv = document.createElement("div")
+                    newDiv.innerHTML = answer;
+                    my_div = document.getElementById("org_div1");
+                    document.body.insertBefore(newDiv, my_div);
+                }    
+                    document.getElementById('inp1').value = ''
+                    document.getElementById('inp2').value = ''
+                }
+        </script>
+
+    </body>
+
+</html>
